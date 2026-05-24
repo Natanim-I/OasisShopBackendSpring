@@ -1,0 +1,23 @@
+package com.oasis.OasisShop.service;
+
+import com.oasis.OasisShop.model.Product;
+import com.oasis.OasisShop.repo.ProductsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductsRepository productsRepo;
+
+    public List<Product> getAllProducts(){
+        return productsRepo.findAll();
+    }
+
+    public Product addProduct(Product product){
+        return productsRepo.save(product);
+    }
+}
