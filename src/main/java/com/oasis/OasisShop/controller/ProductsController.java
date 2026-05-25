@@ -1,11 +1,14 @@
 package com.oasis.OasisShop.controller;
 
+import com.oasis.OasisShop.Exception.ProductNotFoundException;
 import com.oasis.OasisShop.model.Product;
 import com.oasis.OasisShop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -23,16 +26,24 @@ public class ProductsController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") int id){
-        Product product = productService.getProductById(id);
-        if(product != null)
-            return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> getProductById(@PathVariable("id") int id){
+        try{
+            Product product = productService.getProductById(id);
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        } catch (ProductNotFoundException e){
+            return new ResponseEntity<>(e.getMessage() ,HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PostMapping("/product")
-    public Product addProduct(@RequestBody Product product){
-        return productService.addProduct(product);
+    @PostMapping(value = "/product", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> addProduct(@RequestPart()  Product product, @RequestPart() MultipartFile imageFile) {
+        System.out.println("Received product: " + product);
+        try {
+            Product savedProduct = productService.addProduct(product, imageFile);
+            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/product")
