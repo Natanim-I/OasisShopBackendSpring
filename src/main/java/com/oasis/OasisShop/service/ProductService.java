@@ -23,18 +23,14 @@ public class ProductService {
         return productsRepo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
     }
 
-    public Product addProduct(Product product, MultipartFile image) throws IOException {
+    public Product addorUpdateProduct(Product product, MultipartFile image) throws IOException {
         product.setImageName(image.getOriginalFilename());
         product.setImageType(image.getContentType());
         product.setImageData(image.getBytes());
         return productsRepo.save(product);
     }
 
-    public Product updateProduct(Product product) {
-        return productsRepo.save(product);
-    }
-
-    public void deleteProduct(int id) {
-        productsRepo.deleteById(id);
+    public void deleteProduct(Product product){
+        productsRepo.delete(product);
     }
 }
