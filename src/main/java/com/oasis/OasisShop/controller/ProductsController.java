@@ -46,7 +46,7 @@ public class ProductsController {
     }
 
     @PostMapping(value = "/product", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> addProduct(@RequestPart()  Product product, @RequestPart() MultipartFile imageFile) {
+    public ResponseEntity<?> addProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
             Product savedProduct = productService.addorUpdateProduct(product, imageFile);
             return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
@@ -55,8 +55,8 @@ public class ProductsController {
         }
     }
 
-    @PutMapping("/product")
-    public ResponseEntity<?> updateProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
+    @PutMapping(value = "/product/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
             return new ResponseEntity<>(productService.addorUpdateProduct(product, imageFile), HttpStatus.OK);
         } catch (IOException e) {
