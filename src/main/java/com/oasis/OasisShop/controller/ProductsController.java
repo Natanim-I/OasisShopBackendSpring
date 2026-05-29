@@ -48,7 +48,7 @@ public class ProductsController {
     @PostMapping(value = "/product", consumes = {"multipart/form-data"})
     public ResponseEntity<?> addProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
-            Product savedProduct = productService.addorUpdateProduct(product, imageFile);
+            Product savedProduct = productService.addProduct(product, imageFile);
             return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,7 +58,7 @@ public class ProductsController {
     @PutMapping(value = "/product/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
-            return new ResponseEntity<>(productService.addorUpdateProduct(product, imageFile), HttpStatus.OK);
+            return new ResponseEntity<>(productService.updateProduct(product, imageFile), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
