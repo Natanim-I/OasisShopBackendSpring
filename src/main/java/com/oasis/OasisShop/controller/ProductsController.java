@@ -23,25 +23,25 @@ public class ProductsController {
 
     @GetMapping("/products")
     public ResponseEntity<List<Product>> allProducts(){
-        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/product/{id}")
     public ResponseEntity<?> getProductById(@PathVariable("id") int id){
         try{
             Product product = productService.getProductById(id);
-            return new ResponseEntity<>(product, HttpStatus.OK);
+            return ResponseEntity.ok(product);
         } catch (ProductNotFoundException e){
-            return new ResponseEntity<>(e.getMessage() ,HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/product/{id}/image")
     public ResponseEntity<?> getImageByProductId(@PathVariable("id") int id){
         try{
-            return new ResponseEntity<>(productService.getProductById(id).getImageData(), HttpStatus.OK);
+            return ResponseEntity.ok(productService.getProductById(id).getImageData());
         } catch (ProductNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
@@ -49,18 +49,18 @@ public class ProductsController {
     public ResponseEntity<?> addProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
             Product savedProduct = productService.addProduct(product, imageFile);
-            return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PutMapping(value = "/product/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateProduct(@RequestPart() Product product, @RequestPart() MultipartFile imageFile) {
         try {
-            return new ResponseEntity<>(productService.updateProduct(product, imageFile), HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(product, imageFile));
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -69,9 +69,9 @@ public class ProductsController {
         try{
             Product product = productService.getProductById(id);
             productService.deleteProduct(product);
-            return new ResponseEntity<>("Product Deleted Successfully", HttpStatus.OK);
+            return ResponseEntity.ok("Product Deleted Successfully");
         } catch (ProductNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

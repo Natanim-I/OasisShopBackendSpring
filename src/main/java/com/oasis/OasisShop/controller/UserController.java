@@ -1,9 +1,12 @@
 package com.oasis.OasisShop.controller;
 
 import com.oasis.OasisShop.model.User;
+import com.oasis.OasisShop.model.UserResponse;
 import com.oasis.OasisShop.service.JwtService;
 import com.oasis.OasisShop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,17 +27,16 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping("register")
-    public User registerUser(@RequestBody User user){
-        return userService.registerUser(user);
+    public ResponseEntity<User> registerUser(@RequestBody User user){
+        User registeredUser = userService.registerUser(user);
+        UserResponse userResponse = new UserResponse(registeredUser.getUserId(), registeredUser.getUsername());
+        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
 
     @PostMapping("login")
-    public String loginUser(@RequestBody User user){
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if(authentication.isAuthenticated()){
-            return jwtService.generateToken(user.getUsername());
-        }
-
-        return "Login Failed";
+        String token = jwtService.generateToken(user.getUsername());
+        return ResponseEntity.ok(token);
     }
 }
